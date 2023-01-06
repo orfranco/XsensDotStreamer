@@ -153,7 +153,7 @@ class Streamer:
         orientationResetDone = False
         self.stream_flag = True
         startTime = xsensdot_pc_sdk.XsTimeStamp_nowMs()
-        while ms == 0 or xsensdot_pc_sdk.XsTimeStamp_nowMs() - startTime < ms:
+        while xsensdot_pc_sdk.XsTimeStamp_nowMs() - startTime < ms or ms == 0:
             # if self.callback.packetsAvailable():
             #     for device in self.deviceList:
             #         self.callback.getNextPacket(device.portInfo().bluetoothAddress())
@@ -203,7 +203,7 @@ OUTPUT_RATE = 60
 MEASUREMENT_MODE = xsensdot_pc_sdk.XsPayloadMode_ExtendedEuler
 HOST, PORT = "localhost", 3001
 SCANNING_TIME = 8000
-STREAMING_TIME = 30000 # set to zero if you want infinite time.
+STREAMING_TIME = 0  # set to zero if you want infinite time.
 if __name__ == "__main__":
     streamer = Streamer(MEASUREMENT_MODE, OUTPUT_RATE, HOST, PORT)
     streamer.start_scan(SCANNING_TIME)

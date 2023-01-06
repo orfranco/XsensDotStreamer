@@ -18,7 +18,6 @@ class CallbackHandler(xsensdot_pc_sdk.XsDotCallback):
         self._on_data_available_callback = on_data_available_callback
         self.m_lock = Lock()
 
-
     def on_press(key):
         global waitForConnections
         waitForConnections = False
