@@ -73,14 +73,18 @@ class Streamer:
     def _create_connection_manager(self):
         ps_script_on = "SwitchBluetoothOn.ps1"
         ps_script_off = "SwitchBluetoothOff.ps1"
-        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_on])
+        print("Switching Main bluetooth Device...")
+        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_on],
+                       capture_output=True
+                       )
         self.manager = xsensdot_pc_sdk.XsDotConnectionManager()
-        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_off])
+        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_off],
+                       capture_output=True)
+        print("Main Bluetooth Device Switched!")
         self.manager = xsensdot_pc_sdk.XsDotConnectionManager()
         if self.manager is None:
             print("Manager could not be constructed, exiting.")
             exit(-1)
-        print(self.manager.getAvailableBluetoothAdapters())
 
     def _attach_callback_handler(self):
         self.callback = CallbackHandler(self._send_message)

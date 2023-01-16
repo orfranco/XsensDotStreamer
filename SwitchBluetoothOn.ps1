@@ -1,5 +1,5 @@
 $DeviceName = "ASUS USB-BT400"
-Get-PnpDevice -Class "bluetooth" | ForEach-Object {
+Get-PnpDevice -Class "Bluetooth" -Present | ForEach-Object {
   Disable-PnpDevice -InstanceID $_.InstanceID  -Confirm:$false
  }
 Enable-PnpDevice -InstanceId (Get-PnpDevice -FriendlyName $DeviceName).InstanceId  -Confirm:$false
