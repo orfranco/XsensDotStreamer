@@ -4,12 +4,14 @@
 
 import time
 from threading import Thread
+import subprocess
 
 import xsensdot_pc_sdk
 from callback_handler import CallbackHandler
 from client import Client
 from server import Server
 from aiohttp import web
+
 
 
 class Streamer:
@@ -69,10 +71,16 @@ class Streamer:
             self.client.emit(msg)
 
     def _create_connection_manager(self):
+        ps_script_on = "SwitchBluetoothOn.ps1"
+        ps_script_off = "SwitchBluetoothOff.ps1"
+        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_on])
+        self.manager = xsensdot_pc_sdk.XsDotConnectionManager()
+        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_off])
         self.manager = xsensdot_pc_sdk.XsDotConnectionManager()
         if self.manager is None:
             print("Manager could not be constructed, exiting.")
             exit(-1)
+        print(self.manager.getAvailableBluetoothAdapters())
 
     def _attach_callback_handler(self):
         self.callback = CallbackHandler(self._send_message)
@@ -200,7 +208,7 @@ class Streamer:
 
 
 OUTPUT_RATE = 60
-MEASUREMENT_MODE = xsensdot_pc_sdk.XsPayloadMode_ExtendedEuler
+MEASUREMENT_MODE = xsensdot_pc_sdk.XsPayloadMode_HighFidelity
 HOST, PORT = "localhost", 3001
 SCANNING_TIME = 8000
 STREAMING_TIME = 0  # set to zero if you want infinite time.
