@@ -15,4 +15,4 @@ class Server:
         self.sio.on('send-data', self._on_message)
 
     async def _on_message(self, sid, data):
-        await self.sio.emit('recieve-data', data)
+        await self.sio.emit('recieve-data', data)    

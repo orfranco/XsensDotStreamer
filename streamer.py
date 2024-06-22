@@ -11,8 +11,18 @@ from callback_handler import CallbackHandler
 from client import Client
 from server import Server
 from aiohttp import web
+import json
 
+class StreamerMessage:
+        def __init__(self, sensor_id, timestamp, euler_x, euler_y, euler_z):
+            self.sensor_id = sensor_id
+            self.timestamp = timestamp
+            self.euler_x = euler_x
+            self.euler_y = euler_y
+            self.euler_z = euler_z
 
+        def to_json(self):
+            return json.dumps(self.__dict__)
 
 class Streamer:
     def __init__(self, measurement_mode, output_rate, host, port):
@@ -60,15 +70,14 @@ class Streamer:
             print(self.counters)
 
             # build and send message to plugin:
-            address = device.portInfo().bluetoothAddress()
+            sensor_id = device.portInfo().bluetoothAddress()
+            timestamp = packet.timeOfArrival().toString()
             euler_x = packet.orientationEuler().x()
             euler_y = packet.orientationEuler().y()
             euler_z = packet.orientationEuler().z()
-            msg = f"Payload id 20 bleSensorData,{address}" \
-                  f"\neuler_x:{euler_x}" \
-                  f"\neuler_y:{euler_y}" \
-                  f"\neuler_z:{euler_z}"
-            self.client.emit(msg)
+                        
+            streamer_msg = StreamerMessage(sensor_id, timestamp, euler_x, euler_y, euler_z)
+            self.client.emit(streamer_msg.to_json())
 
     def _create_connection_manager(self):
         ps_script_on = "SwitchBluetoothOn.ps1"
