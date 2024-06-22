@@ -81,7 +81,6 @@ class Streamer:
         subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Bypass', '-File', ps_script_off],
                        capture_output=True)
         print("Main Bluetooth Device Switched!")
-        self.manager = xsensdot_pc_sdk.XsDotConnectionManager()
         if self.manager is None:
             print("Manager could not be constructed, exiting.")
             exit(-1)
