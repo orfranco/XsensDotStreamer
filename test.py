@@ -22,12 +22,14 @@ if __name__ == "__main__":
     client = Client(HOST, PORT)
 
     # TODO: check if sending ints cause errors.
-    sensor_ids_and_data = [["1_a", (60.0, 120.0, 180.0)], ["1_b", (240.0, 300.0, 359.0)]]
+    sensor_ids_and_data = [["1_a", (60.0, 120.0, 180.0)]] #,["1_b", (240.0, 300.0, 359.0)]]
+    idx = 0
     while True:
         for (sensor_id, sensor_data) in sensor_ids_and_data:
             transition = random.randint(0, 3)
-            streamer_msg = StreamerMessage(sensor_id, "10:00", sensor_data[0]+transition, sensor_data[1]+transition, sensor_data[2]+transition)
+            streamer_msg = StreamerMessage(sensor_id, str(idx), sensor_data[0]+transition, sensor_data[1]+transition, sensor_data[2]+transition)
             json_msg = streamer_msg.to_json()
             client.emit(json_msg)
             print(json_msg)
-            time.sleep(0.05)
+            idx+=1
+            time.sleep(0.016)
