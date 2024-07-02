@@ -5,6 +5,7 @@ from streamer import StreamerMessage, HOST, PORT
 from threading import Thread
 import random
 import time
+from midi_socket import MidiSocket
 
 def activate_server():
     """
@@ -15,21 +16,15 @@ def activate_server():
     web.run_app(app, host=HOST, port=PORT)
 
 if __name__ == "__main__":
-    # initialize socketio for plugin:
-    server_thread = Thread(target=activate_server)
-    server_thread .daemon = True # for it to stop when main Thread stops.
-    server_thread.start()
-    client = Client(HOST, PORT)
+    midi_socket = MidiSocket()
 
     # TODO: check if sending ints cause errors.
-    sensor_ids_and_data = [["1_a", (60.0, 120.0, 180.0)]] #,["1_b", (240.0, 300.0, 359.0)]]
+    sensor_ids_and_data = [["1_a", 1], ["1_b", 4]]
     idx = 0
     while True:
-        for (sensor_id, sensor_data) in sensor_ids_and_data:
-            transition = random.randint(0, 3)
-            streamer_msg = StreamerMessage(sensor_id, str(idx), sensor_data[0]+transition, sensor_data[1]+transition, sensor_data[2]+transition)
-            json_msg = streamer_msg.to_json()
-            client.emit(json_msg)
-            print(json_msg)
-            idx+=1
+        for (sensor_id, channel) in sensor_ids_and_data:
+            midi_socket.emit(channel, random.randint(0, 127))
+            midi_socket.emit(channel+1, random.randint(0, 127))
+            midi_socket.emit(channel+2, random.randint(0, 127))
             time.sleep(0.016)
+
